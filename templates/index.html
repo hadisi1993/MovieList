@@ -1,0 +1,20 @@
+<!DOBTYPE html>
+<html lang='en'>
+<head>
+	<meta charset = 'utf-8'>
+	<title>{{name}}'s MovieList</title>
+</head>
+	<body>
+		<h2>{{name}}'s MovieList</h2>
+		{# 使用 length过滤器获取Movie的长度#}
+		<p>{{movies|length}}Titles</p>
+		<ul>
+			{%for movie in movies%}
+			<li>{{movie.title}} - {{movie.year}}</li> {#等同于movie['title']#}
+			{%endfor %}
+		</ul>
+		<footer>
+			<small>&copy;2018<a href = "http://helloflask.com/tutorial">HelloFlask</a></small>
+		</footer>
+	</body>
+</html>
