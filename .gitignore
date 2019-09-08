@@ -3,3 +3,4 @@
 __pycacheo__
 .DS_Store
 .env
+*.db
