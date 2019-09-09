@@ -2,7 +2,7 @@ import os
 import sys
 import click
 
-from flask import Flask,render_template,url_for
+from flask import Flask,render_template,url_for,redirect,flash,request
 from flask_sqlalchemy import SQLAlchemy #导入扩展类
 
 Win = sys.platform.startswith('win')
@@ -57,9 +57,51 @@ def inject_user():
 	user = User.query.first()
 	return dict(user=user)  #返回字典
 	
+@app.route('/movie/edit/<int:movie_id>',methods=['GET','POST'])	
+def edit(movie_id):
+	movie = Movie.query.get_or_404(movie_id)
+	
+	
+	if request.method=="POST":
+		#获取登录信息
+		title=request.form.get('title')
+		year=request.form.get('year')
+		#验证信息
+		if not title or not year or len(year)>4 or len(title)>60:
+			flash("Invalid Error.")
+			return redirect(url_for('index'))
+		movie = Movie(title=title,year=year)
+		db.session.add(movie)
+		db.session.commit()
+		flash("Item Created.")	
+		return redirect(url_for('index'))
 		
-@app.route('/') 
+	return render_template('edit.html',movie=movie)  #传入被编辑的电影条目
+
+@app.route('/movie/delete/<int:movie_id>',methods=['POST'])
+def delete(movie_id):
+	movie = Movie.query.get_or_404(movie_id)
+	db.session.delete(movie)
+	db.session.commit()
+	flash('Item deleted')
+	return redirect(url_for('index'))
+	
+@app.route('/',methods= ['GET','POST']) 
 def index(): 
+	if request.method == "POST":
+		title = request.form.get('title')
+		year = request.form.get('year')
+		#验证数据
+		if not title or not year or len(year)>4 or len(title)>60:
+			flash("Invalid Error.")
+			return redirect(url_for('index'))
+		#保存表单数据到数据库
+		movie = Movie(title=title,year=year)
+		db.session.add(movie)
+		db.session.commit()
+		flash('Item created.')
+		return redirect(url_for('index')) #从定向会主页
+		
 	user = User.query.first()#读取用户记录
 	movies = Movie.query.all()
 	return render_template('index.html',user = user,movies = movies)
