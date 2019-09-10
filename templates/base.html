@@ -17,6 +17,12 @@
 			<img alt ="Avatar" class ="avatar" src="{{url_for('static',filename = 'images/ghost.png') }}">
 			{{user.name}}'s MovieList
 		</h2>
+		{%if current_user.is_authenticated %}
+			<li><a href="{{url_for('settings')}}">Settings</a></li>
+			<li><a href="{{url_for('logout')}}">Logout</a></li>
+		{% else %}
+			<li><a href="{{url_for('login')}}">Login</li>
+		{%endif%}
 		<nav>
 			<ul>
 				<li><a href = "{{url_for('index') }}">Home</a></li>
