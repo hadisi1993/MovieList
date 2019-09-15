@@ -45,7 +45,7 @@ def initdb(drop):
 	if drop:   #判断是否输入了选项
 		db.drop_all()
 	db.create_all()
-	click.echo('Initialize database') #输出提示信息
+	click.echo('Initialized database.') #输出提示信息
 	
 @app.cli.command()
 def forge():
@@ -74,18 +74,19 @@ def edit(movie_id):
 	movie = Movie.query.get_or_404(movie_id)
 	
 	
-	if request.method=="POST":
+	if request.method == "POST":
 		#获取登录信息
 		title=request.form.get('title')
 		year=request.form.get('year')
 		#验证信息
 		if not title or not year or len(year)>4 or len(title)>60:
-			flash("Invalid Error.")
-			return redirect(url_for('index'))
-		movie = Movie(title=title,year=year)
-		db.session.add(movie)
+			flash("Invaild input.")
+			return redirect(url_for('edit',movie_id = movie_id))
+			
+		movie.title = title # 更新标题
+		movie.year = year
 		db.session.commit()
-		flash("Item Created.")	
+		flash("Item updated.")	
 		return redirect(url_for('index'))
 		
 	return render_template('edit.html',movie=movie)  #传入被编辑的电影条目
@@ -96,7 +97,7 @@ def delete(movie_id):
 	movie = Movie.query.get_or_404(movie_id)
 	db.session.delete(movie)
 	db.session.commit()
-	flash('Item deleted')
+	flash('Item deleted.')
 	return redirect(url_for('index'))
 	
 @app.route('/',methods= ['GET','POST']) 
@@ -108,7 +109,7 @@ def index():
 		year = request.form.get('year')
 		#验证数据
 		if not title or not year or len(year)>4 or len(title)>60:
-			flash("Invalid Error.")
+			flash("Invaild input.")
 			return redirect(url_for('index'))
 		#保存表单数据到数据库
 		movie = Movie(title=title,year=year)
@@ -179,7 +180,7 @@ def login():
 			flash('Login success.')
 			return redirect(url_for('index'))
 			
-		flash('Invaild username or password')
+		flash('Invaild username or password.')
 		
 		return redirect(url_for('login'))
 		
@@ -190,7 +191,7 @@ def login():
 @login_required #用于认证登录的保护
 def logout():
 	logout_user()
-	flash('Goodbye')
+	flash('Goodbye.')
 	return redirect(url_for('index'))  #从定向回首页
 	
 	
