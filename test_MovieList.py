@@ -1,7 +1,8 @@
 import unittest
 
-from app import app,db,User,Movie,forge,initdb
-
+from movielist import app, db
+from movielist.models import Movie, User
+from movielist.commands import forge, initdb
 
 class MovielistTestCase(unittest.TestCase):
 	
@@ -193,7 +194,7 @@ class MovielistTestCase(unittest.TestCase):
 		self.assertNotIn('Settings updated.',data)
 		self.assertIn('Invaild input.',data)
 		
-	def testz_forge_command(self):
+	def test_forge_command(self):
 		#测试虚拟数据
 		result = self.runner.invoke(forge)
 		self.assertIn('Done.',result.output)
